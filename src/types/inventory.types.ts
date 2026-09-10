@@ -1,5 +1,4 @@
-import type { InventoryItem } from "../models/inventory.model.js";
+import { InventoryItem } from "../models/inventory.model.js";
 
-export type CreateInventoryItem = Omit<InventoryItem, "id">;
-
-export type UpdateInventoryItem = Partial<CreateInventoryItem>;
+export type CreateInventoryItemDTO = Omit<InventoryItem, "id">;
+export type UpdateInventoryItemDTO = Partial<Omit<InventoryItem, "id">>;
