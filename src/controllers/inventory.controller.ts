@@ -5,10 +5,44 @@ import { UpdateInventoryItemDTO } from "../types/inventory.types.js";
 const ALLOWED_FIELDS = ["name", "sku", "price", "stock", "active"] as const;
 
 export function listInventory(req: Request, res: Response): void {
+  let result = inventory;
+
+  const { active, search } = req.query;
+
+  // Filtro por active
+  if (active !== undefined) {
+    if (active !== "true" && active !== "false") {
+      res.status(400).json({
+        success: false,
+        message: "El parámetro active debe ser 'true' o 'false'.",
+      });
+      return;
+    }
+
+    const activeBool = active === "true";
+    result = result.filter((item) => item.active === activeBool);
+  }
+
+  // Filtro por search (coincidencia parcial, sin distinguir mayúsculas/minúsculas)
+  if (search !== undefined) {
+    if (typeof search !== "string" || search.trim() === "") {
+      res.status(400).json({
+        success: false,
+        message: "El parámetro search debe ser un texto no vacío.",
+      });
+      return;
+    }
+
+    const searchLower = search.toLowerCase();
+    result = result.filter((item) =>
+      item.name.toLowerCase().includes(searchLower)
+    );
+  }
+
   res.status(200).json({
     success: true,
-    data: inventory,
-    total: inventory.length,
+    data: result,
+    total: result.length,
   });
 }
 
